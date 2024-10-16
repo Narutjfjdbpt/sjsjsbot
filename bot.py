@@ -32,10 +32,13 @@ def process_courses():
 
             if current_course != last_course:
                 last_course = current_course
+                # Here you would send a message (using Telegram or another method), for now, just printing
+                print(f"New course found: {current_course['name']}")
 
             time.sleep(30)
 
         except Exception as e:
+            print(f"Error: {e}")
             time.sleep(retry_interval)
 
 @app.route('/')
@@ -53,10 +56,18 @@ def run_scraper():
 
 def main():
     flask_thread = Thread(target=run_flask)
+    flask_thread.daemon = True
     flask_thread.start()
 
     scraper_thread = Thread(target=run_scraper)
+    scraper_thread.daemon = True
     scraper_thread.start()
+
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("Shutting down gracefully...")
 
 if __name__ == "__main__":
     main()
